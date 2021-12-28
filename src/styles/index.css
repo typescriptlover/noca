@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+
+input {
+   @apply focus:outline-none;
+}
+
+.transition-basic {
+   @apply transition duration-200 ease-linear;
+}
+
+@tailwind utilities;
+
+@layer components {
+   .will-change {
+      will-change: transform;
+   }
+   .input-placeholder::placeholder {
+      font-weight: 500;
+      font-size: 0.9rem;
+   }
+   .text-shadow {
+      text-shadow: 4px 4px 5px rgba(0, 0, 0, 0.25);
+   }
+   .box-shadow {
+      box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.25);
+   }
+   .border-gradient {
+      border: double 2px transparent;
+      background-image: linear-gradient(#c084fc, #ea580c),
+         linear-gradient(to right, #ea580c, #c084fc);
+      background-origin: border-box;
+      background-clip: content-box, border-box;
+   }
+}
