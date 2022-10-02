@@ -1,10 +1,6 @@
 @tailwind base;
 @tailwind components;
 
-input {
-   @apply focus:outline-none;
-}
-
 .transition-basic {
    @apply transition duration-200 ease-linear;
 }

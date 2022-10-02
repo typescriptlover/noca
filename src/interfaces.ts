@@ -12,7 +12,6 @@ export interface INote {
    width: number;
    height: number;
 }
-
 export interface IMouseCoords {
    x: number;
    y: number;

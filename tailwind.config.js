@@ -1,4 +1,5 @@
-const colors = require('tailwindcss/colors');
+const tailwindColors = require('tailwindcss/colors');
+const colors = require('./tailwind.colors');
 
 module.exports = {
    mode: 'jit',
@@ -26,21 +27,15 @@ module.exports = {
          keyframes: {
             bump: {
                '0%': { transform: 'scale(1)' },
-               '50%': { transform: 'scale(1.15)' },
+               '50%': { transform: 'scale(1.2)' },
                '100%': { transform: 'scale(1)' },
             },
          },
          animation: {
-            bump: 'bump 0.2s ease-in-out',
+            bump: 'bump 0.3s ease-in-out',
          },
          colors: {
-            main: '#0b0f12',
-            gray: colors.trueGray,
-            sister: '#080b0d',
-            brother: '#040607',
-            brotherLight: '#0D1214',
-            sisterLight: '#111416',
-            sisterLighter: '#292c2d',
+            ...tailwindColors,
             ...colors,
          },
       },

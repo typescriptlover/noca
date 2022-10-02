@@ -1,42 +1,37 @@
 import { NextPage } from 'next';
-import { useEffect, useState } from 'react';
-
-import Canvas from '@/components/Canvas';
-import Notes from '@/components/Notes';
-import useStorage from '@/hooks/useStorage';
+import { useRef } from 'react';
 import { useAtom } from 'jotai';
-import * as state from '@/state';
+
+import * as state from '@/lib/state';
+import useCanvasStorage from '@/hooks/useCanvasStorage';
+import Canvas from '@/components/Canvas/Canvas';
+import Zoom from '@/components/Canvas/Zoom';
+import Menu from '@/components/Menu/Menu';
+import Sidebar from '@/components/Sidebar/Sidebar';
 
 const Index: NextPage = () => {
-   const [canvas, setCanvas] = useAtom(state.canvas);
-   const [notes, setNotes] = useAtom(state.notes);
-   const [loaded, setLoaded] = useState<boolean>(false);
+   const loaded = useCanvasStorage();
 
-   const [localCanvas, setLocalCanvas] = useStorage('noca_canvas');
-   const [localNotes, setLocalNotes] = useStorage('noca_notes');
-
-   useEffect(() => {
-      if (localCanvas !== null && localNotes !== null) {
-         if (localCanvas) setCanvas(JSON.parse(localCanvas));
-         if (localNotes) setNotes(JSON.parse(localNotes));
-
-         return () => setLoaded(true);
-      }
-   }, [localCanvas, localNotes]);
-
-   useEffect(() => {
-      if (loaded) {
-         setLocalCanvas(JSON.stringify(canvas));
-         setLocalNotes(JSON.stringify(notes));
-      }
-   }, [loaded, notes, canvas]);
+   const containerRef = useRef<HTMLDivElement>(null);
+   const canvasRef = useRef<HTMLDivElement>(null);
+   const [cursor] = useAtom(state.cursor);
 
    if (!loaded) return null;
-
    return (
-      <Canvas>
-         <Notes />
-      </Canvas>
+      <div
+         id="container"
+         ref={containerRef}
+         className="fixed inset-0"
+         style={{
+            contain: 'strict',
+            cursor,
+         }}
+      >
+         <Canvas ref={canvasRef} container={containerRef} />
+         <Menu />
+         <Sidebar container={containerRef} canvas={canvasRef} />
+         <Zoom />
+      </div>
    );
 };
 
