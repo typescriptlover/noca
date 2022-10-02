@@ -4,7 +4,7 @@ import { useAtom } from 'jotai';
 import * as state from '@/lib/state';
 import Note from './Note';
 
-import { INote } from '@/interfaces';
+import { INote } from '@/types/interfaces';
 
 const Notes: FC = () => {
    const [notes, setNotes] = useAtom(state.notes);

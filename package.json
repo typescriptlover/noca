@@ -9,6 +9,7 @@
    },
    "dependencies": {
       "@tippyjs/react": "^4.2.6",
+      "clsx": "^1.2.1",
       "framer-motion": "^7.4.0",
       "jotai": "^1.8.4",
       "next": "12.3.1",

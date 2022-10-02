@@ -16,7 +16,7 @@ import Tool from './Tool';
 import Box from '@/layouts/Box';
 import getMouseCoords from '@/lib/getMouseCoords';
 import getSelection from '@/lib/getSelection';
-import { IMouseCoords } from '@/interfaces';
+import { IMouseCoords } from '@/types/interfaces';
 
 interface CreationProps {
    canvas: RefObject<HTMLDivElement>;

@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import * as state from '@/lib/state';
 import Tool from './Tool';
 import getMouseCoords from '@/lib/getMouseCoords';
-import { IMouseCoords } from '@/interfaces';
+import { IMouseCoords } from '@/types/interfaces';
 import Box from '@/layouts/Box';
 import getSelection from '@/lib/getSelection';
 

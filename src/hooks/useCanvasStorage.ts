@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import * as state from '@/lib/state';
 import useStorage from './useStorage';
-import { ICanvas, INote } from '@/interfaces';
+import { ICanvas, INote } from '@/types/interfaces';
 
 const useCanvasStorage = () => {
    const [canvas, setCanvas] = useAtom(state.canvas);

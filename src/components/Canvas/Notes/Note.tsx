@@ -2,7 +2,7 @@ import { FC, MouseEvent, useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
 
 import * as state from '@/lib/state';
-import { INote } from '@/interfaces';
+import { INote } from '@/types/interfaces';
 
 interface Props {
    note: INote;

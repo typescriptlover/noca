@@ -3,9 +3,9 @@ import { motion } from 'framer-motion';
 
 import { useAtom } from 'jotai';
 
-import { TTab } from '@/types';
+import { TTab } from '@/types/types';
 import * as state from '@/lib/state';
-import { INote } from '@/interfaces';
+import { INote } from '@/types/interfaces';
 
 interface Props {
    setShowMenu: Dispatch<SetStateAction<boolean>>;

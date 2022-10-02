@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
 
-import { ICanvas, INote } from '@/interfaces';
-import { TTools } from '@/types';
+import { ICanvas, INote } from '@/types/interfaces';
+import { TTools } from '@/types/types';
 
 export const busy = atom<boolean>(false);
 export const jumping = atom<boolean>(false);

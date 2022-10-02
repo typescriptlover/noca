@@ -1,7 +1,7 @@
 import { useState, Dispatch, SetStateAction } from 'react';
 
 import { TabButton } from './Button';
-import { TTab } from '@/types';
+import { TTab } from '@/types/types';
 
 interface Props {
    tabs: (tab: TTab, setTab: Dispatch<SetStateAction<TTab | false>>) => any;

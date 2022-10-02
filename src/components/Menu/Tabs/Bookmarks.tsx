@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 
-import { TTab } from '@/types';
+import { TTab } from '@/types/types';
 
 interface Props {
    setTab: Dispatch<SetStateAction<false | TTab>>;

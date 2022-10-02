@@ -1,4 +1,4 @@
-import { IMouseCoords } from '@/interfaces';
+import { IMouseCoords } from '@/types/interfaces';
 
 export default function getSelection(
    current: IMouseCoords,

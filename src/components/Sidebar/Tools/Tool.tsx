@@ -5,7 +5,7 @@ import { useAtom } from 'jotai';
 
 import * as state from '@/lib/state';
 
-import { TTool } from '@/types';
+import { TTool } from '@/types/types';
 
 interface Props {
    tool: TTool;
