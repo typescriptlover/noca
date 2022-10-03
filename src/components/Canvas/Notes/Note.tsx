@@ -56,30 +56,32 @@ const Note: FC<Props> = ({ note, setNote }) => {
          }}
       >
          <div className="relative w-full h-full">
-            {canvas.scale <= 0.3 && !jumping && (
-               <motion.div
-                  initial={{ opacity: 0, scale: 0.5, y: 15 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{
-                     ease: 'easeInOut',
-                     duration: 0.4,
-                  }}
-               >
-                  <div className="absolute inset-x-0 top-0 flex items-center justify-center transition-all duration-200 ease-in-out">
-                     <button
-                        onClick={() => jump()}
-                        className="transition duration-200 ease-linear focus:outline-none text-zinc-400 hover:text-white"
-                        style={{
-                           marginTop: `-${locationTop()}px`,
-                           fontSize: `${locationSize()}px`,
-                        }}
-                     >
-                        <i className="fa-duotone fa-location-dot"></i>
-                     </button>
-                  </div>
-               </motion.div>
-            )}
-
+            <AnimatePresence mode="wait">
+               {canvas.scale <= 0.3 && !jumping && (
+                  <motion.div
+                     initial={{ opacity: 0, scale: 0.5, y: 15 }}
+                     animate={{ opacity: 1, scale: 1, y: 0 }}
+                     exit={{ opacity: 0, scale: 0.5, y: 15 }}
+                     transition={{
+                        ease: 'easeInOut',
+                        duration: 0.4,
+                     }}
+                  >
+                     <div className="absolute inset-x-0 top-0 flex items-center justify-center transition-all duration-200 ease-in-out">
+                        <button
+                           onClick={() => jump()}
+                           className="transition duration-200 ease-linear focus:outline-none text-zinc-400 hover:text-white"
+                           style={{
+                              marginTop: `-${locationTop()}px`,
+                              fontSize: `${locationSize()}px`,
+                           }}
+                        >
+                           <i className="fa-duotone fa-location-dot"></i>
+                        </button>
+                     </div>
+                  </motion.div>
+               )}
+            </AnimatePresence>
             <div className="w-full h-full shadow-2xl focus-within:scale-110 will-change transition duration-200 ease-in-out rounded-xl border-[4px] border-base-850 focus-within:border-base-800">
                <textarea
                   disabled={jumping}
