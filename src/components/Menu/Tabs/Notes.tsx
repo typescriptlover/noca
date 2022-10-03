@@ -5,7 +5,9 @@ import { useAtom } from 'jotai';
 
 import { TTab } from '@/types/types';
 import * as state from '@/lib/state';
+import getNoteCoords from '@/lib/getNoteCoords';
 import { INote } from '@/types/interfaces';
+import useJump from '@/hooks/useJump';
 
 interface Props {
    setShowMenu: Dispatch<SetStateAction<boolean>>;
@@ -20,30 +22,7 @@ const Notes: React.FC<Props> = ({ setShowMenu, setTab }) => {
    const [page, setPage] = useState<number>(1);
    const [maxPages, setPages] = useState<number>(Math.ceil(notes.length / per));
 
-   function convert(note: INote): { x: number; y: number } {
-      return {
-         x: parseFloat(
-            (-note.x + (window.innerWidth / 2 - note.width / 2)).toFixed(1)
-         ),
-         y: parseFloat(
-            (-note.y + (window.innerHeight / 2 - note.height / 2)).toFixed(1)
-         ),
-      };
-   }
-
-   function jump(note: INote) {
-      const { x, y } = convert(note);
-
-      setShowMenu(false);
-      setJumping(true);
-      setCanvas({
-         ...canvas,
-         x,
-         y,
-         scale: 1.0,
-      });
-      setJumping(false);
-   }
+   const jump = useJump(false);
 
    return (
       <div className="flex flex-col">
@@ -65,10 +44,13 @@ const Notes: React.FC<Props> = ({ setShowMenu, setTab }) => {
                      <button
                         key={`menu-${note.id}`}
                         className="w-full px-5 py-3 text-left rounded-xl hover:bg-base-900 transition-basic"
-                        onClick={() => jump(note)}
+                        onClick={() => {
+                           setShowMenu(false);
+                           jump(note);
+                        }}
                      >
                         <div className="text-xs font-medium tracking-wide text-gray-300">
-                           {convert(note).x}, {convert(note).y}
+                           #{note.id}
                         </div>
                         <div className="w-full mt-2 text-sm italic font-semibold truncate">
                            {note.note || 'This note is empty'}
