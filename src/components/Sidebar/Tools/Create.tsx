@@ -19,7 +19,6 @@ import Box from '@/layouts/Box';
 import getMouseCoords from '@/lib/getMouseCoords';
 import getSelection from '@/lib/getSelection';
 import { IMouseCoords } from '@/types/interfaces';
-import isOverlapping from '@/lib/isOverlapping';
 import useCancel from '@/hooks/useCancel';
 
 interface CreationProps {
