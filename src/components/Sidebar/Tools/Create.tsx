@@ -6,6 +6,8 @@ import {
    Dispatch,
    SetStateAction,
    useEffect,
+   useRef,
+   forwardRef,
 } from 'react';
 import { createPortal } from 'react-dom';
 import { useAtom } from 'jotai';
@@ -17,6 +19,8 @@ import Box from '@/layouts/Box';
 import getMouseCoords from '@/lib/getMouseCoords';
 import getSelection from '@/lib/getSelection';
 import { IMouseCoords } from '@/types/interfaces';
+import isOverlapping from '@/lib/isOverlapping';
+import useCancel from '@/hooks/useCancel';
 
 interface CreationProps {
    canvas: RefObject<HTMLDivElement>;
@@ -28,74 +32,62 @@ interface CreationProps {
    setSelecting: Dispatch<SetStateAction<boolean>>;
 }
 
-const Creation: FC<CreationProps> = ({
-   canvas,
-   start,
-   current,
-   scale,
-   creating,
-   setCreating,
-   setSelecting,
-}) => {
-   const [notes, setNotes] = useAtom(state.notes);
+const Creation = forwardRef<HTMLDivElement, CreationProps>(
+   (
+      { canvas, start, current, scale, creating, setCreating, setSelecting },
+      ref
+   ) => {
+      const [notes, setNotes] = useAtom(state.notes);
 
-   const selection = getSelection(start, current);
+      const selection = getSelection(start, current);
 
-   function borderSize() {
-      return 3 / scale;
-   }
-
-   function borderRadius() {
-      return 12 / scale;
-   }
-
-   useEffect(() => {
-      if (creating) {
-         if (selection.height <= 100 || selection.width <= 100) {
-            setCreating(false);
-            setSelecting(false);
-         } else {
-            const timeout = setTimeout(() => {
+      useEffect(() => {
+         if (creating) {
+            if (selection.height <= 100 || selection.width <= 100) {
                setCreating(false);
                setSelecting(false);
+            } else {
+               const timeout = setTimeout(() => {
+                  setCreating(false);
+                  setSelecting(false);
 
-               setNotes([
-                  ...notes,
-                  {
-                     id: notes.length + 1,
-                     height: selection.height,
-                     width: selection.width,
-                     x: selection.left,
-                     y: selection.top,
-                     note: '',
-                  },
-               ]);
-            }, 350);
+                  setNotes([
+                     ...notes,
+                     {
+                        id: notes.length + 1,
+                        height: selection.height,
+                        width: selection.width,
+                        x: selection.left,
+                        y: selection.top,
+                        note: '',
+                     },
+                  ]);
+               }, 350);
 
-            return () => clearTimeout(timeout);
+               return () => clearTimeout(timeout);
+            }
          }
-      }
-   }, [creating, notes]);
+      }, [creating, notes]);
 
-   if (!canvas.current) return null;
-   return createPortal(
-      <div
-         className={clsx(
-            'absolute pointer-events-none transition duration-200 ease-linear select-none border-base-800',
-            creating ? 'bg-base-800 animate-bump' : 'bg-transparent'
-         )}
-         style={{
-            left: `${selection.left}px`,
-            top: `${selection.top}px`,
-            width: `${selection.width}px`,
-            height: `${selection.height}px`,
-            borderRadius: `${borderRadius()}px`,
-            borderWidth: `${borderSize()}px`,
-         }}
-      />,
-      canvas.current
-   );
-};
+      if (!canvas.current) return null;
+      return createPortal(
+         <div
+            ref={ref}
+            className={clsx(
+               'absolute pointer-events-none transition rounded-xl border-[4px] duration-200 ease-linear select-none border-base-800',
+               creating ? 'bg-base-800 animate-bump' : 'bg-transparent'
+            )}
+            style={{
+               left: `${selection.left}px`,
+               top: `${selection.top}px`,
+               width: `${selection.width}px`,
+               height: `${selection.height}px`,
+            }}
+         />,
+         canvas.current
+      );
+   }
+);
 
 interface Props {
    container: RefObject<HTMLDivElement>;
@@ -108,8 +100,8 @@ const Create: FC<Props> = ({ container, canvas }) => {
    const [{ scale }] = useAtom(state.canvas);
 
    const [selecting, setSelecting] = useState<boolean>(false);
-
    const [creating, setCreating] = useState<boolean>(false);
+
    const [start, setStart] = useState<IMouseCoords>({
       x: 0,
       y: 0,
@@ -118,6 +110,8 @@ const Create: FC<Props> = ({ container, canvas }) => {
       x: 0,
       y: 0,
    });
+
+   const creationRef = useRef<HTMLDivElement>(null);
 
    function startSelect(e: MouseEvent) {
       if (e.currentTarget !== e.target || creating) return;
@@ -138,7 +132,6 @@ const Create: FC<Props> = ({ container, canvas }) => {
 
       if (coords) {
          const { x, y } = coords;
-
          setCurrent({ x, y });
       }
    }
@@ -162,11 +155,17 @@ const Create: FC<Props> = ({ container, canvas }) => {
       };
    }, [active, selecting, creating, scale]);
 
+   useCancel(() => {
+      setSelecting(false);
+      setCreating(false);
+   });
+
    return (
       <Box>
          <Tool tool="create" icon="note" />
          {active && selecting && (
             <Creation
+               ref={creationRef}
                canvas={canvas}
                start={start}
                current={current}

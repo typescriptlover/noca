@@ -30,7 +30,7 @@ const Selection: FC<SelectionProps> = ({ canvas, start, current, scale }) => {
    if (!canvas.current) return null;
    return createPortal(
       <div
-         className="absolute border-dashed pointer-events-none select-none bg-base-900/20 border-base-750"
+         className="absolute border-dashed pointer-events-none select-none bg-base-900/20 border-base-700"
          style={{
             left: `${selection.left}px`,
             top: `${selection.top}px`,
