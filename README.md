@@ -2,4 +2,6 @@
 
 > **no-ca** (_note canvas_)
 
-_an infinitely spatial and interactive note app easily manageable for your thoughts._
+**a personal note canvas just for you, create and manage your thoughts efficiently and interactively.**
+
+_we don't store your data elsewhere, all data is stored inside your browser storage with PouchDB._
