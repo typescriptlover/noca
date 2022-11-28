@@ -1,4 +1,4 @@
-import { FC, MouseEvent, useEffect, useState } from 'react';
+import { FC, RefObject, useEffect, useRef, useState } from 'react';
 import { useAtom } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -7,37 +7,49 @@ import { INote } from '@/types/interfaces';
 import getNoteCoords from '@/lib/getNoteCoords';
 import useJump from '@/hooks/useJump';
 import Tooltip from '@/components/ui/Tooltip';
+import getMouseCoords from '@/lib/getMouseCoords';
 
 interface Props {
    note: INote;
    setNote: (id: number, newNote: INote) => void;
    deleteNote: (id: number) => void;
+   canvasRef: RefObject<HTMLDivElement>;
 }
 
 // TODO: don't unmount location pin on scale, performance boost
-const Note: FC<Props> = ({ note, setNote, deleteNote }) => {
-   const [canvas, setCanvas] = useAtom(state.canvas);
+const Note: FC<Props> = ({ note, setNote, deleteNote, canvasRef }) => {
+   const [canvas] = useAtom(state.canvas);
    const [_, setBusy] = useAtom(state.busy);
-   const [jumping, setJumping] = useAtom(state.jumping);
+   const [jumping] = useAtom(state.jumping);
    const jump = useJump(note);
 
    const [moving, setMoving] = useState<boolean>(false);
+   const toolbarRef = useRef<HTMLDivElement>(null);
 
-   function startMove(e: MouseEvent<HTMLDivElement>) {
-      if (e.currentTarget !== e.target) return;
-      setMoving(true);
+   function toggleMove() {
+      setMoving(!moving);
    }
 
    function move(e: any) {
       if (!moving) return;
 
-      console.log(e.pageX, e.pageY);
+      const coords = getMouseCoords(canvasRef, e, canvas.scale);
+
+      if (coords) {
+         const { x, y } = coords;
+
+         setNote(note.id, {
+            ...note,
+            x: x - note.width + 20,
+            y: y - (toolbarRef.current?.offsetTop || 0) - 20,
+         });
+      }
    }
 
    useEffect(() => {
       document.addEventListener('mousemove', move);
       return () => document.removeEventListener('mousemove', move);
-   }, [moving]);
+   }, [canvas.scale, moving]);
 
    function locationTop() {
       return 45 / canvas.scale;
@@ -50,7 +62,6 @@ const Note: FC<Props> = ({ note, setNote, deleteNote }) => {
    return (
       <div
          id={`note-${note.id}`}
-         onDoubleClick={startMove}
          className="absolute pointer-events-auto"
          style={{
             width: `${note.width}px`,
@@ -58,7 +69,7 @@ const Note: FC<Props> = ({ note, setNote, deleteNote }) => {
             transform: `translate(${note.x}px, ${note.y}px)`,
          }}
       >
-         <div className="relative w-full h-full">
+         <div className="relativ w-full h-full">
             <AnimatePresence mode="wait">
                {canvas.scale <= 0.3 && !jumping && (
                   <motion.div
@@ -85,7 +96,7 @@ const Note: FC<Props> = ({ note, setNote, deleteNote }) => {
                   </motion.div>
                )}
             </AnimatePresence>
-            <div className="relative w-full h-full shadow-2xl focus-within:scale-110 will-change transition duration-200 ease-in-out rounded-xl border-[4px] border-base-850 focus-within:border-base-800">
+            <div className="relative focus-within:scale-105 w-full h-full shadow-2xl transition duration-200 ease-in-out rounded-xl border-[4px] border-base-850 focus-within:border-base-750">
                <motion.div
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -94,19 +105,25 @@ const Note: FC<Props> = ({ note, setNote, deleteNote }) => {
                      duration: 0.3,
                   }}
                >
-                  <div className="absolute top-0 right-0 -mr-1 -mt-14">
-                     <div className="flex items-center rounded-xl bg-base-900">
-                        <Tooltip text="Delete">
-                           <button
+                  <div
+                     ref={toolbarRef}
+                     className="absolute top-0 right-0 -mr-1 -mt-14"
+                  >
+                     <div className="flex px-0.5 items-center rounded-xl bg-base-850">
+                        <Tooltip disabled={moving} text="Delete">
+                           <span
                               onClick={() => deleteNote(note.id)}
-                              className="px-3 py-2 transition duration-200 ease-linear text-zinc-400 hover:text-white"
+                              className="px-2.5 cursor-pointer py-2 transition duration-200 ease-linear text-zinc-400 hover:text-white"
                            >
                               <i className="fa-solid fa-fw fa-trash"></i>
-                           </button>
+                           </span>
                         </Tooltip>
-                        <button className="px-3 py-2 text-zinc-400 cursor-grab">
-                           <i className="fa-regular fa-fw fa-up-down-left-right"></i>
-                        </button>
+                        <span
+                           onClick={toggleMove}
+                           className="px-2.5 py-2 text-zinc-400 cursor-grab"
+                        >
+                           <i className="fa-solid fa-fw fa-up-down-left-right"></i>
+                        </span>
                      </div>
                   </div>
                </motion.div>
@@ -122,7 +139,7 @@ const Note: FC<Props> = ({ note, setNote, deleteNote }) => {
                         note: e.target.value,
                      });
                   }}
-                  className="w-full h-full p-3 overflow-hidden text-sm font-medium text-white rounded-lg resize-none select-text focus:overflow-auto focus:outline-none bg-base-400/10"
+                  className="w-full h-full p-3 overflow-hidden text-sm font-medium text-white rounded-lg resize-none select-text focus:overflow-auto focus:outline-none bg-base-400/10 focus:bg-base-300/10"
                />
             </div>
          </div>

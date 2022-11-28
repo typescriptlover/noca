@@ -32,7 +32,7 @@ const Canvas = forwardRef<HTMLDivElement, Props>(({ container }, ref) => {
             transform: `scale(${canvas.scale}) translate(${canvas.x}px, ${canvas.y}px)`,
          }}
       >
-         <Notes />
+         <Notes canvasRef={ref as RefObject<HTMLDivElement>} />
       </div>
    );
 });

@@ -25,7 +25,7 @@ const Menu: React.FC<Props> = () => {
             <Tooltip text="Menu" placement="bottom">
                <button
                   onClick={() => setShowMenu(!showMenu)}
-                  className="px-5 py-3 text-xl text-white transition duration-200 ease-linear border drop-shadow-2xl rounded-xl bg-base-900 hover:bg-base-850 border-base-850 will-change"
+                  className="px-5 py-3 text-xl text-white transition duration-200 ease-linear border drop-shadow-2xl rounded-xl bg-base-850 hover:bg-base-800 border-base-750 will-change"
                >
                   <i className="fas fa-bars"></i>
                </button>

@@ -12,7 +12,7 @@ export const TabButton: React.FC<Props> = ({ name, icon, action }) => {
       >
          <div className="flex items-center justify-between">
             <div>
-               <span className="mr-6 text-lg opacity-30">
+               <span className="mr-6 text-lg opacity-40">
                   <i className={`fad fa-fw fa-${icon}`}></i>
                </span>
                {name}

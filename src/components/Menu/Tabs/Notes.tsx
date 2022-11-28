@@ -43,7 +43,7 @@ const Notes: React.FC<Props> = ({ setShowMenu, setTab }) => {
                   .map((note, noteIndex) => (
                      <button
                         key={`menu-${note.id}`}
-                        className="w-full px-5 py-3 text-left rounded-xl hover:bg-base-900 transition-basic"
+                        className="w-full px-5 py-4 text-left rounded-xl hover:bg-base-900 transition-basic"
                         onClick={() => {
                            setShowMenu(false);
                            jump(note);

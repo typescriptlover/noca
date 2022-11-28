@@ -40,8 +40,8 @@ const Tool: FC<Props> = ({ tool, icon, action }) => {
             className={clsx(
                'focus:outline-none px-2.5 py-2 text-xl transition duration-200 ease-linear group rounded-xl',
                active
-                  ? 'text-white bg-base-800'
-                  : 'text-zinc-400 hover:text-white focus:text-white focus:bg-base-850 hover:bg-base-850'
+                  ? 'text-white bg-base-700'
+                  : 'text-zinc-400 hover:text-white focus:text-white focus:bg-base-750 hover:bg-base-750'
             )}
          >
             <span

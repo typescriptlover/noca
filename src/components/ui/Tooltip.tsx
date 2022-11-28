@@ -38,7 +38,7 @@ const Tooltip: FC<Props> = ({ text, children, className, ...tippy }) => {
       <Tippy
          render={(attrs: any) => (
             <motion.div
-               className="text-xs !-mb-1 !-mt-1 will-change font-semibold text-white tracking-tight bg-base-750 py-1.5 rounded-lg shadow-2xl px-2.5"
+               className="text-xs !-mb-1 !-mt-1 will-change font-semibold text-white tracking-tight bg-base-650 py-1.5 rounded-lg shadow-2xl px-2.5"
                style={{ y, opacity }}
                {...attrs}
             >

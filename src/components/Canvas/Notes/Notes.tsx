@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, ForwardedRef, RefObject } from 'react';
 import { useAtom } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -7,8 +7,12 @@ import Note from './Note';
 
 import { INote } from '@/types/interfaces';
 
+interface Props {
+   canvasRef: RefObject<HTMLDivElement>;
+}
+
 // TODO: only render notes visible in render distance
-const Notes: FC = () => {
+const Notes: FC<Props> = ({ canvasRef }) => {
    const [notes, setNotes] = useAtom(state.notes);
 
    function setNote(id: number, newNote: INote) {
@@ -43,7 +47,12 @@ const Notes: FC = () => {
                      duration: 0.3,
                   }}
                >
-                  <Note note={note} setNote={setNote} deleteNote={deleteNote} />
+                  <Note
+                     note={note}
+                     setNote={setNote}
+                     deleteNote={deleteNote}
+                     canvasRef={canvasRef}
+                  />
                </motion.div>
             ))}
          </AnimatePresence>
