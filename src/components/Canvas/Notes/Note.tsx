@@ -3,21 +3,23 @@ import { useAtom } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import * as state from '@/lib/state';
-import { INote } from '@/types/interfaces';
-import getNoteCoords from '@/lib/getNoteCoords';
 import useJump from '@/hooks/useJump';
 import Tooltip from '@/components/ui/Tooltip';
 import getMouseCoords from '@/lib/getMouseCoords';
 
+import { INote } from '@/types/interfaces';
+import * as db from '@/lib/db';
+import { useDebounce } from '@/hooks/useDebounce';
+import clsx from 'clsx';
+
 interface Props {
-   note: INote;
-   setNote: (id: number, newNote: INote) => void;
-   deleteNote: (id: number) => void;
+   note: INote & PouchDB.Core.IdMeta;
+   updateNote: (_id: string, newNote: INote) => void;
+   deleteNote: (_id: string) => void;
    canvasRef: RefObject<HTMLDivElement>;
 }
 
-// TODO: don't unmount location pin on scale, performance boost
-const Note: FC<Props> = ({ note, setNote, deleteNote, canvasRef }) => {
+const Note: FC<Props> = ({ note, updateNote, deleteNote, canvasRef }) => {
    const [canvas] = useAtom(state.canvas);
    const [_, setBusy] = useAtom(state.busy);
    const [jumping] = useAtom(state.jumping);
@@ -26,7 +28,19 @@ const Note: FC<Props> = ({ note, setNote, deleteNote, canvasRef }) => {
    const [moving, setMoving] = useState<boolean>(false);
    const toolbarRef = useRef<HTMLDivElement>(null);
 
+   const debounceNote = useDebounce(note.note, 500);
+
+   useEffect(() => {
+      if (note.note === debounceNote) {
+         db.updateNote(note._id, {
+            ...note,
+            note: debounceNote,
+         });
+      }
+   }, [note, debounceNote]);
+
    function toggleMove() {
+      if (moving) db.updateNote(note._id, note);
       setMoving(!moving);
    }
 
@@ -38,12 +52,17 @@ const Note: FC<Props> = ({ note, setNote, deleteNote, canvasRef }) => {
       if (coords) {
          const { x, y } = coords;
 
-         setNote(note.id, {
+         updateNote(note._id, {
             ...note,
             x: x - note.width + 20,
             y: y - (toolbarRef.current?.offsetTop || 0) - 20,
          });
       }
+   }
+
+   function Delete() {
+      deleteNote(note._id);
+      db.deleteNote(note._id);
    }
 
    useEffect(() => {
@@ -61,7 +80,7 @@ const Note: FC<Props> = ({ note, setNote, deleteNote, canvasRef }) => {
 
    return (
       <div
-         id={`note-${note.id}`}
+         id={`note-${note._id}`}
          className="absolute pointer-events-auto"
          style={{
             width: `${note.width}px`,
@@ -69,7 +88,7 @@ const Note: FC<Props> = ({ note, setNote, deleteNote, canvasRef }) => {
             transform: `translate(${note.x}px, ${note.y}px)`,
          }}
       >
-         <div className="relativ w-full h-full">
+         <div className="w-full h-full relativ">
             <AnimatePresence mode="wait">
                {canvas.scale <= 0.3 && !jumping && (
                   <motion.div
@@ -96,7 +115,14 @@ const Note: FC<Props> = ({ note, setNote, deleteNote, canvasRef }) => {
                   </motion.div>
                )}
             </AnimatePresence>
-            <div className="relative focus-within:scale-105 w-full h-full shadow-2xl transition duration-200 ease-in-out rounded-xl border-[4px] border-base-850 focus-within:border-base-750">
+            <div
+               className={clsx(
+                  'relative w-full h-full shadow-2xl transition duration-200 ease-in-out rounded-xl border-[4px]',
+                  moving
+                     ? 'scale-105 border-base-750'
+                     : 'border-base-850 focus-within:border-base-750'
+               )}
+            >
                <motion.div
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -112,7 +138,7 @@ const Note: FC<Props> = ({ note, setNote, deleteNote, canvasRef }) => {
                      <div className="flex px-0.5 items-center rounded-xl bg-base-850">
                         <Tooltip disabled={moving} text="Delete">
                            <span
-                              onClick={() => deleteNote(note.id)}
+                              onClick={Delete}
                               className="px-2.5 cursor-pointer py-2 transition duration-200 ease-linear text-zinc-400 hover:text-white"
                            >
                               <i className="fa-solid fa-fw fa-trash"></i>
@@ -134,7 +160,7 @@ const Note: FC<Props> = ({ note, setNote, deleteNote, canvasRef }) => {
                   spellCheck={false}
                   value={note.note || ''}
                   onInput={(e: any) => {
-                     setNote(note.id, {
+                     updateNote(note._id, {
                         ...note,
                         note: e.target.value,
                      });

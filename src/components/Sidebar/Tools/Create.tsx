@@ -13,6 +13,7 @@ import { createPortal } from 'react-dom';
 import { useAtom } from 'jotai';
 import clsx from 'clsx';
 
+import * as db from '@/lib/db';
 import * as state from '@/lib/state';
 import Tool from './Tool';
 import Box from '@/layouts/Box';
@@ -50,17 +51,16 @@ const Creation = forwardRef<HTMLDivElement, CreationProps>(
                   setCreating(false);
                   setSelecting(false);
 
-                  setNotes([
-                     ...notes,
-                     {
-                        id: notes.length + 1,
-                        height: selection.height,
-                        width: selection.width,
-                        x: selection.left,
-                        y: selection.top,
-                        note: '',
-                     },
-                  ]);
+                  const note = {
+                     _id: Date.now().toString(),
+                     height: selection.height,
+                     width: selection.width,
+                     x: selection.left,
+                     y: selection.top,
+                     note: '',
+                  };
+                  setNotes([...notes, note]);
+                  db.createNote(note);
                }, 350);
 
                return () => clearTimeout(timeout);

@@ -6,6 +6,7 @@ import * as state from '@/lib/state';
 import Note from './Note';
 
 import { INote } from '@/types/interfaces';
+import * as db from '@/lib/db';
 
 interface Props {
    canvasRef: RefObject<HTMLDivElement>;
@@ -15,17 +16,20 @@ interface Props {
 const Notes: FC<Props> = ({ canvasRef }) => {
    const [notes, setNotes] = useAtom(state.notes);
 
-   function setNote(id: number, newNote: INote) {
+   function updateNote(_id: string, newNote: INote) {
       setNotes(
          notes.map((n) => {
-            if (n.id !== id) return n;
-            return newNote;
+            if (n._id !== _id) return n;
+            return {
+               _id: n._id,
+               ...newNote,
+            };
          })
       );
    }
 
-   function deleteNote(id: number) {
-      const newNotes = notes.filter((n) => n.id !== id);
+   function deleteNote(_id: string) {
+      const newNotes = notes.filter((n) => n._id !== _id);
       setNotes(newNotes);
    }
 
@@ -38,7 +42,7 @@ const Notes: FC<Props> = ({ canvasRef }) => {
          <AnimatePresence>
             {notes.map((note) => (
                <motion.div
-                  key={note.id}
+                  key={note._id}
                   initial={false}
                   animate={false}
                   exit={{ opacity: 0, y: -25 }}
@@ -49,7 +53,7 @@ const Notes: FC<Props> = ({ canvasRef }) => {
                >
                   <Note
                      note={note}
-                     setNote={setNote}
+                     updateNote={updateNote}
                      deleteNote={deleteNote}
                      canvasRef={canvasRef}
                   />

@@ -1,7 +1,7 @@
 import type { AppProps } from 'next/app';
 
 import '@/styles/index.css';
-import '@/styles/custom.css';
+import '@/styles/global.css';
 import '@/styles/fonts/inter.css';
 
 import Box from '@/layouts/Box';

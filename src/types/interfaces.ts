@@ -5,7 +5,6 @@ export interface ICanvas {
 }
 
 export interface INote {
-   id: number;
    note: string;
    x: number;
    y: number;

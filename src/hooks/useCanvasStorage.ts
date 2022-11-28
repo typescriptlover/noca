@@ -1,47 +1,37 @@
 import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 
+import useLocalStorage from './useLocalStorage';
 import * as state from '@/lib/state';
-import useStorage from './useStorage';
-import { ICanvas, INote } from '@/types/interfaces';
+
+import { ICanvas } from '@/types/interfaces';
 
 const useCanvasStorage = () => {
-   const [canvas, setCanvas] = useAtom(state.canvas);
-   const [notes, setNotes] = useAtom(state.notes);
-
    const [loaded, setLoaded] = useState<boolean>(false);
-
-   const [localCanvas, setLocalCanvas] = useStorage('noca_canvas');
-   const [localNotes, setLocalNotes] = useStorage('noca_notes');
+   const [canvas, setCanvas] = useAtom(state.canvas);
+   const [localCanvas, setLocalCanvas] = useLocalStorage('noca_canvas');
 
    useEffect(() => {
       if (!loaded) {
-         if (localCanvas === null && localNotes === null) {
+         if (localCanvas === null) {
             setLoaded(true);
-         } else if (localCanvas || localNotes) {
+         } else if (localCanvas) {
             if (localCanvas) {
                const parsedCanvas = JSON.parse(localCanvas) as ICanvas;
                setCanvas(parsedCanvas);
             }
-            if (localNotes) {
-               const parsedNotes = JSON.parse(localNotes) as INote[];
-               setNotes(parsedNotes);
-            }
             setLoaded(true);
          }
       }
-   }, [loaded, localCanvas, localNotes]);
+   }, [loaded, localCanvas]);
 
    useEffect(() => {
       if (loaded) {
          if (!localCanvas || JSON.stringify(canvas) !== localCanvas) {
             setLocalCanvas(JSON.stringify(canvas));
          }
-         if (!localNotes || JSON.stringify(notes) !== localNotes) {
-            setLocalNotes(JSON.stringify(notes));
-         }
       }
-   }, [loaded, canvas, localCanvas, notes, localNotes]);
+   }, [loaded, canvas, localCanvas]);
 
    return loaded;
 };

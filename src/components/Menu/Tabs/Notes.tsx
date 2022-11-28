@@ -5,8 +5,6 @@ import { useAtom } from 'jotai';
 
 import { TTab } from '@/types/types';
 import * as state from '@/lib/state';
-import getNoteCoords from '@/lib/getNoteCoords';
-import { INote } from '@/types/interfaces';
 import useJump from '@/hooks/useJump';
 
 interface Props {
@@ -38,29 +36,27 @@ const Notes: React.FC<Props> = ({ setShowMenu, setTab }) => {
          <hr className="my-4 border-t border-base-850" />
          {notes.length ? (
             <div className="grid grid-cols-2 gap-2">
-               {notes
-                  .slice((page - 1) * per, per * page)
-                  .map((note, noteIndex) => (
-                     <button
-                        key={`menu-${note.id}`}
-                        className="w-full px-5 py-4 text-left rounded-xl hover:bg-base-900 transition-basic"
-                        onClick={() => {
-                           setShowMenu(false);
-                           jump(note);
-                        }}
-                     >
-                        <div className="text-xs font-medium tracking-wide text-gray-300">
-                           #{note.id}
-                        </div>
-                        <div className="w-full mt-2 text-sm italic font-semibold truncate">
-                           {note.note || 'This note is empty'}
-                        </div>
-                     </button>
-                  ))}
+               {notes.slice((page - 1) * per, per * page).map((note) => (
+                  <button
+                     key={`menu-${note._id}`}
+                     className="w-full px-5 py-4 text-left rounded-xl hover:bg-base-900 transition-basic"
+                     onClick={() => {
+                        setShowMenu(false);
+                        jump(note);
+                     }}
+                  >
+                     <div className="text-xs font-medium tracking-wide text-gray-300">
+                        #{note._id}
+                     </div>
+                     <div className="w-full mt-2 text-sm italic font-semibold truncate">
+                        {note.note || 'This note is empty'}
+                     </div>
+                  </button>
+               ))}
             </div>
          ) : (
             <div className="px-4 text-sm italic font-medium text-zinc-300">
-               No notes created yet, let's start there first...
+               No notes created yet, let&apos;s start there first...
             </div>
          )}
       </div>

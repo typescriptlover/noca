@@ -2,21 +2,25 @@ import { NextPage } from 'next';
 import { useRef } from 'react';
 import { useAtom } from 'jotai';
 
-import * as state from '@/lib/state';
 import useCanvasStorage from '@/hooks/useCanvasStorage';
+import useNotesStorage from '@/hooks/useNotesStorage';
+import * as state from '@/lib/state';
 import Canvas from '@/components/Canvas/Canvas';
 import Zoom from '@/components/Canvas/Zoom';
 import Menu from '@/components/Menu/Menu';
 import Sidebar from '@/components/Sidebar/Sidebar';
 
 const Index: NextPage = () => {
-   const loaded = useCanvasStorage();
+   const canvasLoaded = useCanvasStorage();
+   useNotesStorage();
 
    const containerRef = useRef<HTMLDivElement>(null);
    const canvasRef = useRef<HTMLDivElement>(null);
    const [cursor] = useAtom(state.cursor);
 
-   if (!loaded) return null;
+   // TODO: add some sort of loading canvas
+   if (!canvasLoaded) return null;
+
    return (
       <div
          id="container"

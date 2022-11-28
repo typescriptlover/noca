@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 
-export default function useStorage(name: string): [string | null | false, any] {
+export default function useLocalStorage(
+   name: string
+): [string | null | false, any] {
    const [storage, setStorage] = useState<string | false | null>(false);
 
    useEffect(() => {

@@ -13,7 +13,7 @@ export const tools = atom<TTools>({
    select: false,
    move: false,
 });
-export const notes = atom<INote[]>([]);
+export const notes = atom<(INote & PouchDB.Core.IdMeta)[]>([]);
 export const busy = atom<boolean>(false);
 export const jumping = atom<boolean>(false);
 export const cursor = atom<string>('auto');
