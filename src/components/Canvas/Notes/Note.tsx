@@ -88,7 +88,7 @@ const Note: FC<Props> = ({ note, updateNote, deleteNote, canvasRef }) => {
             transform: `translate(${note.x}px, ${note.y}px)`,
          }}
       >
-         <div className="w-full h-full relativ">
+         <div className="w-full h-full relative">
             <AnimatePresence mode="wait">
                {canvas.scale <= 0.3 && !jumping && (
                   <motion.div

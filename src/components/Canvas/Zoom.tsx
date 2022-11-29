@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
 import { useAtom } from 'jotai';
 
 import * as state from '@/lib/state';
