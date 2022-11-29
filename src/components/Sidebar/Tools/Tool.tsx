@@ -46,7 +46,7 @@ const Tool: FC<Props> = ({ tool, icon, action }) => {
          >
             <span
                className={clsx(
-                  'inline-block transition duration-200 ease-linear will-change',
+                  'inline-block transition duration-200 ease-linear will-change-transform',
                   active ? 'scale-110' : 'group-hover:scale-110'
                )}
             >

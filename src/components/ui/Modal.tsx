@@ -74,7 +74,7 @@ const Modal: FC<Props> = ({
                   <div className="absolute top-3 right-4">
                      <button
                         onClick={close}
-                        className="text-2xl transition duration-200 ease-linear opacity-50 hover:scale-105 will-change hover:opacity-100"
+                        className="text-2xl transition duration-200 ease-linear opacity-50 hover:scale-105 will-change-transform hover:opacity-100"
                      >
                         <i className="fa-light fa-xmark"></i>
                      </button>

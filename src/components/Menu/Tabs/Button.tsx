@@ -17,7 +17,7 @@ export const TabButton: React.FC<Props> = ({ name, icon, action }) => {
                </span>
                {name}
             </div>
-            <div className="transition duration-200 ease-linear scale-75 opacity-0 will-change group-hover:opacity-100 group-hover:scale-100">
+            <div className="transition duration-200 ease-linear scale-75 opacity-0 will-change-transform group-hover:opacity-100 group-hover:scale-100">
                <span className="text-lg opacity-50">
                   <i className="fa-solid fa-arrow-up-right"></i>
                </span>
