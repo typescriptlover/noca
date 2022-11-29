@@ -8,7 +8,7 @@ export const TabButton: React.FC<Props> = ({ name, icon, action }) => {
    return (
       <button
          onClick={action}
-         className="focus:outline-none group w-full px-5 py-3.5 text-base font-semibold transition-basic hover:bg-base-900 focus:bg-sister focus:scale-95 rounded-xl"
+         className="focus:outline-none group w-full px-5 py-3.5 text-base font-semibold transition duration-200 ease-linear hover:bg-base-900 focus:bg-sister focus:scale-95 rounded-xl"
       >
          <div className="flex items-center justify-between">
             <div>

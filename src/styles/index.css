@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 
-.transition-basic {
+.transition duration-200 ease-linear {
    @apply transition duration-200 ease-linear;
 }
 
