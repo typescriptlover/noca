@@ -24,7 +24,18 @@ const Notes: FC<Props> = ({ canvasRef }) => {
       >
          <AnimatePresence>
             {notes.map((note) => (
-               <Note key={note._id} note={note} canvasRef={canvasRef} />
+               <motion.div
+                  key={note._id}
+                  initial={false}
+                  animate={false}
+                  exit={{ opacity: 0, y: -25 }}
+                  transition={{
+                     ease: 'easeInOut',
+                     duration: 0.3,
+                  }}
+               >
+                  <Note note={note} canvasRef={canvasRef} />
+               </motion.div>
             ))}
          </AnimatePresence>
       </div>
