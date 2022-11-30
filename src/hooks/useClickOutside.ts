@@ -24,5 +24,5 @@ export default function useClickOutside(
 
          return () => document.removeEventListener('mousedown', clickOutsideA);
       }
-   }, [condition, ref, ...(dependencies ?? [])]);
+   }, [handler, condition, ref, dependencies]);
 }

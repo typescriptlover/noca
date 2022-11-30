@@ -1,11 +1,13 @@
 import { FC } from 'react';
-import { useAtom } from 'jotai';
 
-import * as state from '@/lib/state';
+import useBearStore from '@/lib/state';
 import Tooltip from '../ui/Tooltip';
 
 const Zoom: FC = () => {
-   const [canvas, setCanvas] = useAtom(state.canvas);
+   const [canvas, updateCanvas] = useBearStore((state) => [
+      state.canvas,
+      state.updateCanvas,
+   ]);
 
    return (
       <div className="absolute bottom-[20px] right-[20px] z-50">
@@ -15,8 +17,7 @@ const Zoom: FC = () => {
                   disabled={canvas.scale - 0.1 <= 0}
                   onClick={() => {
                      const scale = canvas.scale - 0.1;
-                     setCanvas({
-                        ...canvas,
+                     updateCanvas({
                         scale: parseFloat(scale.toFixed(1)),
                      });
                   }}
@@ -33,8 +34,7 @@ const Zoom: FC = () => {
                   disabled={canvas.scale + 0.1 > 1}
                   onClick={() => {
                      const scale = canvas.scale + 0.1;
-                     setCanvas({
-                        ...canvas,
+                     updateCanvas({
                         scale: parseFloat(scale.toFixed(1)),
                      });
                   }}

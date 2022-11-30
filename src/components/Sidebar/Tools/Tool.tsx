@@ -1,9 +1,8 @@
 import Tooltip from '@/components/ui/Tooltip';
 import { FC, MouseEvent, useMemo } from 'react';
 import clsx from 'clsx';
-import { useAtom } from 'jotai';
 
-import * as state from '@/lib/state';
+import useBearStore from '@/lib/state';
 
 import { TTool } from '@/types/types';
 
@@ -14,17 +13,20 @@ interface Props {
 }
 
 const Tool: FC<Props> = ({ tool, icon, action }) => {
-   const [tools, setTools] = useAtom(state.tools);
-   const [_, setCursor] = useAtom(state.cursor);
-   const active = useMemo(() => tools[tool], [tools]);
+   const [tools, updateCursor, updateTools] = useBearStore((state) => [
+      state.tools,
+      state.updateCursor,
+      state.updateTools,
+   ]);
+   const active = useMemo(() => tools[tool], [tools, tool]);
 
    function setActive() {
       const newTools = Object.keys(tools).reduce((a, k) => {
          return { ...a, [k]: false };
       }, tools);
 
-      setCursor('auto');
-      setTools({
+      updateCursor('auto');
+      updateTools({
          ...newTools,
          [tool]: true,
       });

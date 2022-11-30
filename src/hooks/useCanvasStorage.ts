@@ -1,15 +1,18 @@
-import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 
 import useLocalStorage from './useLocalStorage';
-import * as state from '@/lib/state';
+import useBearStore from '@/lib/state';
 
 import { ICanvas } from '@/types/interfaces';
 
 const useCanvasStorage = () => {
    const [loaded, setLoaded] = useState<boolean>(false);
-   const [canvas, setCanvas] = useAtom(state.canvas);
    const [localCanvas, setLocalCanvas] = useLocalStorage('noca_canvas');
+
+   const [canvas, updateCanvas] = useBearStore((state) => [
+      state.canvas,
+      state.updateCanvas,
+   ]);
 
    useEffect(() => {
       if (!loaded) {
@@ -18,12 +21,12 @@ const useCanvasStorage = () => {
          } else if (localCanvas) {
             if (localCanvas) {
                const parsedCanvas = JSON.parse(localCanvas) as ICanvas;
-               setCanvas(parsedCanvas);
+               updateCanvas(parsedCanvas);
             }
             setLoaded(true);
          }
       }
-   }, [loaded, localCanvas]);
+   }, [updateCanvas, loaded, localCanvas]);
 
    useEffect(() => {
       if (loaded) {
@@ -31,7 +34,7 @@ const useCanvasStorage = () => {
             setLocalCanvas(JSON.stringify(canvas));
          }
       }
-   }, [loaded, canvas, localCanvas]);
+   }, [setLocalCanvas, loaded, localCanvas, canvas]);
 
    return loaded;
 };

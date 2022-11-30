@@ -1,8 +1,8 @@
 import { FC, ForwardedRef, RefObject } from 'react';
-import { useAtom } from 'jotai';
+
 import { AnimatePresence, motion } from 'framer-motion';
 
-import * as state from '@/lib/state';
+import useBearStore from '@/lib/state';
 import Note from './Note';
 
 import { INote } from '@/types/interfaces';
@@ -14,24 +14,7 @@ interface Props {
 
 // TODO: only render notes visible in render distance
 const Notes: FC<Props> = ({ canvasRef }) => {
-   const [notes, setNotes] = useAtom(state.notes);
-
-   function updateNote(_id: string, newNote: INote) {
-      setNotes(
-         notes.map((n) => {
-            if (n._id !== _id) return n;
-            return {
-               _id: n._id,
-               ...newNote,
-            };
-         })
-      );
-   }
-
-   function deleteNote(_id: string) {
-      const newNotes = notes.filter((n) => n._id !== _id);
-      setNotes(newNotes);
-   }
+   const notes = useBearStore((state) => state.notes);
 
    return (
       <div
@@ -41,23 +24,7 @@ const Notes: FC<Props> = ({ canvasRef }) => {
       >
          <AnimatePresence>
             {notes.map((note) => (
-               <motion.div
-                  key={note._id}
-                  initial={false}
-                  animate={false}
-                  exit={{ opacity: 0, y: -25 }}
-                  transition={{
-                     ease: 'easeInOut',
-                     duration: 0.3,
-                  }}
-               >
-                  <Note
-                     note={note}
-                     updateNote={updateNote}
-                     deleteNote={deleteNote}
-                     canvasRef={canvasRef}
-                  />
-               </motion.div>
+               <Note key={note._id} note={note} canvasRef={canvasRef} />
             ))}
          </AnimatePresence>
       </div>

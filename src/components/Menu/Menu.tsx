@@ -1,7 +1,6 @@
-import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 
-import * as state from '@/lib/state';
+import useBearStore from '@/lib/state';
 import Modal from '../ui/Modal';
 import Tabs from './Tabs/Tabs';
 import Notes from './Tabs/Notes';
@@ -12,12 +11,12 @@ import Tooltip from '../ui/Tooltip';
 interface Props {}
 
 const Menu: React.FC<Props> = () => {
-   const [_, setBusy] = useAtom(state.busy);
+   const updateBusy = useBearStore((state) => state.updateBusy);
    const [showMenu, setShowMenu] = useState<boolean>(false);
 
    useEffect(() => {
-      setBusy(showMenu);
-   }, [showMenu]);
+      updateBusy(showMenu);
+   }, [updateBusy, showMenu]);
 
    return (
       <>

@@ -10,11 +10,11 @@ import {
    forwardRef,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { useAtom } from 'jotai';
+
 import clsx from 'clsx';
 
 import * as db from '@/lib/db';
-import * as state from '@/lib/state';
+import useBearStore from '@/lib/state';
 import Tool from './Tool';
 import Box from '@/layouts/Box';
 import getMouseCoords from '@/lib/getMouseCoords';
@@ -37,7 +37,10 @@ const Creation = forwardRef<HTMLDivElement, CreationProps>(
       { canvas, start, current, scale, creating, setCreating, setSelecting },
       ref
    ) => {
-      const [notes, setNotes] = useAtom(state.notes);
+      const [notes, createNote] = useBearStore((state) => [
+         state.notes,
+         state.createNote,
+      ]);
 
       const selection = getSelection(start, current);
 
@@ -59,14 +62,14 @@ const Creation = forwardRef<HTMLDivElement, CreationProps>(
                      y: selection.top,
                      note: '',
                   };
-                  setNotes([...notes, note]);
+                  createNote(note);
                   db.createNote(note);
                }, 350);
 
                return () => clearTimeout(timeout);
             }
          }
-      }, [creating, notes]);
+      }, [createNote, selection, creating, setCreating, setSelecting, notes]);
 
       if (!canvas.current) return null;
       return createPortal(
@@ -94,9 +97,11 @@ interface Props {
 }
 
 const Create: FC<Props> = ({ container, canvas }) => {
-   const [tools] = useAtom(state.tools);
+   const [tools, scale] = useBearStore((state) => [
+      state.tools,
+      state.canvas.scale,
+   ]);
    const active = useMemo(() => tools.create, [tools]);
-   const [{ scale }] = useAtom(state.canvas);
 
    const [selecting, setSelecting] = useState<boolean>(false);
    const [creating, setCreating] = useState<boolean>(false);
@@ -112,34 +117,34 @@ const Create: FC<Props> = ({ container, canvas }) => {
 
    const creationRef = useRef<HTMLDivElement>(null);
 
-   function startSelect(e: MouseEvent) {
-      if (e.currentTarget !== e.target || creating) return;
-
-      const coords = getMouseCoords(canvas, e, scale);
-
-      if (coords) {
-         const { x, y } = coords;
-
-         setStart({ x, y });
-         setCurrent({ x, y });
-         setSelecting(true);
-      }
-   }
-
-   function handleSelect(e: MouseEvent) {
-      const coords = getMouseCoords(canvas, e, scale);
-
-      if (coords) {
-         const { x, y } = coords;
-         setCurrent({ x, y });
-      }
-   }
-
    function handleCreate() {
       setCreating(true);
    }
 
    useEffect(() => {
+      function startSelect(e: MouseEvent) {
+         if (e.currentTarget !== e.target || creating) return;
+
+         const coords = getMouseCoords(canvas, e, scale);
+
+         if (coords) {
+            const { x, y } = coords;
+
+            setStart({ x, y });
+            setCurrent({ x, y });
+            setSelecting(true);
+         }
+      }
+
+      function handleSelect(e: MouseEvent) {
+         const coords = getMouseCoords(canvas, e, scale);
+
+         if (coords) {
+            const { x, y } = coords;
+            setCurrent({ x, y });
+         }
+      }
+
       if (active) {
          container.current?.addEventListener('mousedown', startSelect);
          if (selecting && !creating) {
@@ -152,7 +157,7 @@ const Create: FC<Props> = ({ container, canvas }) => {
          container.current?.removeEventListener('mousemove', handleSelect);
          container.current?.removeEventListener('mouseup', handleCreate);
       };
-   }, [active, selecting, creating, scale]);
+   }, [canvas, container, active, selecting, creating, scale]);
 
    useCancel(() => {
       setSelecting(false);

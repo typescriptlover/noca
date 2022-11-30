@@ -1,37 +1,35 @@
-import { useAtom } from 'jotai';
 import { useEffect } from 'react';
 import tinykeys from 'tinykeys';
 
-import * as state from '@/lib/state';
+import useBearStore from '@/lib/state';
 
 export default function useMove(rate: number) {
-   const [canvas, setCanvas] = useAtom(state.canvas);
-   const [busy] = useAtom(state.busy);
+   const [canvas, updateCanvas] = useBearStore((state) => [
+      state.canvas,
+      state.updateCanvas,
+   ]);
+   const busy = useBearStore((state) => state.busy);
 
    useEffect(() => {
       if (!busy) {
          const unsubscribe = tinykeys(window, {
             ArrowUp: () => {
-               setCanvas({
-                  ...canvas,
+               updateCanvas({
                   y: canvas.y + rate,
                });
             },
             ArrowDown: () => {
-               setCanvas({
-                  ...canvas,
+               updateCanvas({
                   y: canvas.y - rate,
                });
             },
             ArrowRight: () => {
-               setCanvas({
-                  ...canvas,
+               updateCanvas({
                   x: canvas.x - rate,
                });
             },
             ArrowLeft: () => {
-               setCanvas({
-                  ...canvas,
+               updateCanvas({
                   x: canvas.x + rate,
                });
             },
@@ -41,5 +39,5 @@ export default function useMove(rate: number) {
             unsubscribe();
          };
       }
-   }, [busy, canvas]);
+   }, [rate, updateCanvas, busy, canvas]);
 }

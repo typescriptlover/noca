@@ -42,7 +42,7 @@ const Modal: FC<Props> = ({
       if (containerRef.current) {
          containerRef.current.style.overflowY = showModal ? 'auto' : 'hidden';
       }
-   }, [showModal, containerRef.current]);
+   }, [showModal, containerRef]);
 
    if (typeof document === 'undefined') return null;
 

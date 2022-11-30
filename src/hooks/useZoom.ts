@@ -1,11 +1,13 @@
-import { useAtom } from 'jotai';
 import { RefObject, useEffect } from 'react';
 
-import * as state from '@/lib/state';
+import useBearStore from '@/lib/state';
 
 export default function useZoom(containerRef: RefObject<HTMLDivElement>) {
-   const [canvas, setCanvas] = useAtom(state.canvas);
-   const [busy] = useAtom(state.busy);
+   const [canvas, updateCanvas] = useBearStore((state) => [
+      state.canvas,
+      state.updateCanvas,
+   ]);
+   const busy = false;
 
    useEffect(() => {
       if (!busy && containerRef.current) {
@@ -14,23 +16,22 @@ export default function useZoom(containerRef: RefObject<HTMLDivElement>) {
 
             if (down) {
                if (canvas.scale >= 0.2) {
-                  setCanvas({
-                     ...canvas,
+                  updateCanvas({
                      scale: parseFloat((canvas.scale - 0.1).toFixed(1)),
                   });
                }
             } else {
                if (canvas.scale < 1.0) {
-                  setCanvas({
-                     ...canvas,
+                  updateCanvas({
                      scale: parseFloat((canvas.scale + 0.1).toFixed(1)),
                   });
                }
             }
          };
 
-         containerRef.current.addEventListener('wheel', wheel);
-         return () => containerRef.current?.removeEventListener('wheel', wheel);
+         const current = containerRef.current;
+         current.addEventListener('wheel', wheel);
+         return () => current.removeEventListener('wheel', wheel);
       }
-   }, [busy, canvas, containerRef.current]);
+   }, [updateCanvas, busy, canvas, containerRef]);
 }

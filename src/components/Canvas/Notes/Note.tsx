@@ -1,8 +1,8 @@
 import { FC, RefObject, useEffect, useRef, useState } from 'react';
-import { useAtom } from 'jotai';
+
 import { AnimatePresence, motion } from 'framer-motion';
 
-import * as state from '@/lib/state';
+import useBearStore from '@/lib/state';
 import useJump from '@/hooks/useJump';
 import Tooltip from '@/components/ui/Tooltip';
 import getMouseCoords from '@/lib/getMouseCoords';
@@ -14,15 +14,19 @@ import clsx from 'clsx';
 
 interface Props {
    note: INote & PouchDB.Core.IdMeta;
-   updateNote: (_id: string, newNote: INote) => void;
-   deleteNote: (_id: string) => void;
    canvasRef: RefObject<HTMLDivElement>;
 }
 
-const Note: FC<Props> = ({ note, updateNote, deleteNote, canvasRef }) => {
-   const [canvas] = useAtom(state.canvas);
-   const [_, setBusy] = useAtom(state.busy);
-   const [jumping] = useAtom(state.jumping);
+const Note: FC<Props> = ({ note, canvasRef }) => {
+   const [canvas, jumping, updateBusy, updateNote, deleteNote] = useBearStore(
+      (state) => [
+         state.canvas,
+         state.jumping,
+         state.updateBusy,
+         state.updateNote,
+         state.deleteNote,
+      ]
+   );
    const jump = useJump(note);
 
    const [moving, setMoving] = useState<boolean>(false);
@@ -44,31 +48,30 @@ const Note: FC<Props> = ({ note, updateNote, deleteNote, canvasRef }) => {
       setMoving(!moving);
    }
 
-   function move(e: any) {
-      if (!moving) return;
-
-      const coords = getMouseCoords(canvasRef, e, canvas.scale);
-
-      if (coords) {
-         const { x, y } = coords;
-
-         updateNote(note._id, {
-            ...note,
-            x: x - note.width + 20,
-            y: y - (toolbarRef.current?.offsetTop || 0) - 20,
-         });
-      }
-   }
-
    function Delete() {
       deleteNote(note._id);
       db.deleteNote(note._id);
    }
 
    useEffect(() => {
+      function move(e: any) {
+         if (!moving) return;
+
+         const coords = getMouseCoords(canvasRef, e, canvas.scale);
+
+         if (coords) {
+            const { x, y } = coords;
+
+            updateNote(note._id, {
+               x: x - note.width + 15,
+               y: y - (toolbarRef.current?.offsetTop || 0) - 15,
+            });
+         }
+      }
+
       document.addEventListener('mousemove', move);
       return () => document.removeEventListener('mousemove', move);
-   }, [canvas.scale, moving]);
+   }, [canvasRef, note, updateNote, canvas, moving]);
 
    function locationTop() {
       return 45 / canvas.scale;
@@ -81,14 +84,16 @@ const Note: FC<Props> = ({ note, updateNote, deleteNote, canvasRef }) => {
    return (
       <div
          id={`note-${note._id}`}
-         className="absolute pointer-events-auto"
+         className="absolute pointer-events-auto transition-transform"
          style={{
             width: `${note.width}px`,
             height: `${note.height}px`,
             transform: `translate(${note.x}px, ${note.y}px)`,
+            transitionProperty: 'transform',
+            transitionDuration: '50ms',
          }}
       >
-         <div className="w-full h-full relative">
+         <div className="relative w-full h-full">
             <AnimatePresence mode="wait">
                {canvas.scale <= 0.3 && !jumping && (
                   <motion.div
@@ -155,8 +160,8 @@ const Note: FC<Props> = ({ note, updateNote, deleteNote, canvasRef }) => {
                </motion.div>
                <textarea
                   disabled={jumping}
-                  onFocus={() => setBusy(true)}
-                  onBlur={() => setBusy(false)}
+                  onFocus={() => updateBusy(true)}
+                  onBlur={() => updateBusy(false)}
                   spellCheck={false}
                   value={note.note || ''}
                   onInput={(e: any) => {

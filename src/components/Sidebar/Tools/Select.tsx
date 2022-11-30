@@ -1,8 +1,8 @@
 import { FC, RefObject, useEffect, useMemo, useState } from 'react';
-import { useAtom } from 'jotai';
+
 import { createPortal } from 'react-dom';
 
-import * as state from '@/lib/state';
+import useBearStore from '@/lib/state';
 import Tool from './Tool';
 import getMouseCoords from '@/lib/getMouseCoords';
 import { IMouseCoords } from '@/types/interfaces';
@@ -49,12 +49,14 @@ interface Props {
    canvas: RefObject<HTMLDivElement>;
 }
 const Select: FC<Props> = ({ container, canvas }) => {
-   const [tools] = useAtom(state.tools);
+   const [tools, updateCursor, scale] = useBearStore((state) => [
+      state.tools,
+      state.updateCursor,
+      state.canvas.scale,
+   ]);
    const active = useMemo(() => tools.select, [tools]);
-   const [_, setCursor] = useAtom(state.cursor);
 
    const [selecting, setSelecting] = useState<boolean>(false);
-   const [{ scale }] = useAtom(state.canvas);
 
    const [start, setStart] = useState<IMouseCoords>({
       x: 0,
@@ -65,30 +67,6 @@ const Select: FC<Props> = ({ container, canvas }) => {
       y: 0,
    });
 
-   function startSelect(e: MouseEvent) {
-      if (e.currentTarget !== e.target) return;
-
-      const coords = getMouseCoords(canvas, e, scale);
-
-      if (coords) {
-         const { x, y } = coords;
-
-         setStart({ x, y });
-         setCurrent({ x, y });
-         setSelecting(true);
-      }
-   }
-
-   function handleSelect(e: MouseEvent) {
-      const coords = getMouseCoords(canvas, e, scale);
-
-      if (coords) {
-         const { x, y } = coords;
-
-         setCurrent({ x, y });
-      }
-   }
-
    function stopSelect() {
       setSelecting(false);
 
@@ -97,6 +75,30 @@ const Select: FC<Props> = ({ container, canvas }) => {
    }
 
    useEffect(() => {
+      function startSelect(e: MouseEvent) {
+         if (e.currentTarget !== e.target) return;
+
+         const coords = getMouseCoords(canvas, e, scale);
+
+         if (coords) {
+            const { x, y } = coords;
+
+            setStart({ x, y });
+            setCurrent({ x, y });
+            setSelecting(true);
+         }
+      }
+
+      function handleSelect(e: MouseEvent) {
+         const coords = getMouseCoords(canvas, e, scale);
+
+         if (coords) {
+            const { x, y } = coords;
+
+            setCurrent({ x, y });
+         }
+      }
+
       if (active) {
          container.current?.addEventListener('mousedown', startSelect);
          if (selecting) {
@@ -109,16 +111,14 @@ const Select: FC<Props> = ({ container, canvas }) => {
          container.current?.removeEventListener('mousemove', handleSelect);
          container.current?.removeEventListener('mouseup', stopSelect);
       };
-   }, [active, selecting, scale]);
+   }, [canvas, container, active, selecting, scale]);
 
    return (
       <Box>
          <Tool
             tool="select"
             icon="square-dashed"
-            action={() => {
-               setCursor('crosshair');
-            }}
+            action={() => updateCursor('crosshair')}
          />
          {active && selecting && (
             <Selection

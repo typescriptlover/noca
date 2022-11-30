@@ -12,9 +12,12 @@ export async function getAllNotes() {
 }
 
 export async function createNote(note: INote & PouchDB.Core.IdMeta) {
-   return db.put<INote>({
-      ...note,
-   });
+   return db
+      .put<INote>({
+         ...note,
+      })
+      .then((n) => n)
+      .catch(() => false);
 }
 
 export async function getNote(_id: string) {

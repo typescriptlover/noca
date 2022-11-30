@@ -1,10 +1,8 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { motion } from 'framer-motion';
 
-import { useAtom } from 'jotai';
-
 import { TTab } from '@/types/types';
-import * as state from '@/lib/state';
+import useBearStore from '@/lib/state';
 import useJump from '@/hooks/useJump';
 
 interface Props {
@@ -14,9 +12,7 @@ interface Props {
 
 const Notes: React.FC<Props> = ({ setShowMenu, setTab }) => {
    const per = 10;
-   const [canvas, setCanvas] = useAtom(state.canvas);
-   const [notes] = useAtom(state.notes);
-   const [_, setJumping] = useAtom(state.jumping);
+   const [notes] = useBearStore((state) => [state.notes]);
    const [page, setPage] = useState<number>(1);
    const [maxPages, setPages] = useState<number>(Math.ceil(notes.length / per));
 

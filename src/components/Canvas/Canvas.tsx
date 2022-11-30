@@ -1,8 +1,7 @@
-import { useAtom } from 'jotai';
 import { RefObject, forwardRef } from 'react';
 import clsx from 'clsx';
 
-import * as state from '@/lib/state';
+import useBearStore from '@/lib/state';
 import useZoom from '@/hooks/useZoom';
 import useMove from '@/hooks/useMove';
 import Notes from './Notes/Notes';
@@ -13,8 +12,10 @@ interface Props {
 }
 
 const Canvas = forwardRef<HTMLDivElement, Props>(({ container }, ref) => {
-   const [canvas] = useAtom(state.canvas);
-   const [jumping] = useAtom(state.jumping);
+   const [canvas, jumping] = useBearStore((state) => [
+      state.canvas,
+      state.jumping,
+   ]);
 
    useZoom(container);
    useMove(150);
@@ -22,6 +23,7 @@ const Canvas = forwardRef<HTMLDivElement, Props>(({ container }, ref) => {
    return (
       <div
          id="canvas"
+         key="canvas"
          ref={ref}
          className={clsx(
             'absolute inset-0 transition-all pointer-events-none select-none',

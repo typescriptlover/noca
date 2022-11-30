@@ -1,7 +1,6 @@
-import { useAtom } from 'jotai';
 import { FC, RefObject, useState } from 'react';
 
-import * as state from '@/lib/state';
+import useBearStore from '@/lib/state';
 import Tool from './Tool';
 
 interface Props {
@@ -10,15 +9,13 @@ interface Props {
 }
 
 const Move: FC<Props> = ({ container, canvas }) => {
-   const [_, setCursor] = useAtom(state.cursor);
+   const updateCursor = useBearStore((state) => state.updateCursor);
 
    return (
       <Tool
          tool="move"
          icon="up-down-left-right"
-         action={() => {
-            setCursor('grab');
-         }}
+         action={() => updateCursor('grab')}
       />
    );
 };

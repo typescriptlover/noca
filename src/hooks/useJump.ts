@@ -1,37 +1,37 @@
 import getNoteCoords from '@/lib/getNoteCoords';
-import { useAtom } from 'jotai';
+
 import { useCallback } from 'react';
 
-import * as state from '@/lib/state';
+import useBearStore from '@/lib/state';
 import { INote } from '@/types/interfaces';
 import { jumpingAnimation } from '@/lib/constants';
 
-export default function useJump(note: INote | false) {
-   const [_, setJumping] = useAtom(state.jumping);
-   const [canvas, setCanvas] = useAtom(state.canvas);
+export default function useJump(note: (INote & PouchDB.Core.IdMeta) | false) {
+   const [updateCanvas, updateJumping] = useBearStore((state) => [
+      state.updateCanvas,
+      state.updateJumping,
+   ]);
 
    return useCallback(
       (cnote?: INote) => {
          const { x, y } = getNoteCoords(note || cnote!);
 
-         setJumping(true);
-         setCanvas({
-            ...canvas,
+         updateJumping(true);
+         updateCanvas({
             x,
             y,
          });
          setTimeout(() => {
-            setCanvas({
-               ...canvas,
+            updateCanvas({
                x,
                y,
                scale: 1.0,
             });
             setTimeout(() => {
-               setJumping(false);
+               updateJumping(false);
             }, jumpingAnimation);
          }, jumpingAnimation);
       },
-      [note, canvas]
+      [updateCanvas, updateJumping, note]
    );
 }

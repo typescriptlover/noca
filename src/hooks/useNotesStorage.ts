@@ -1,12 +1,14 @@
-import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 
-import * as state from '@/lib/state';
+import useBearStore from '@/lib/state';
 import * as db from '@/lib/db';
 
 export default function useNotesStorage() {
    const [loaded, setLoaded] = useState<boolean>(false);
-   const [notes, setNotes] = useAtom(state.notes);
+   const [notes, updateNotes] = useBearStore((state) => [
+      state.notes,
+      state.updateNotes,
+   ]);
 
    useEffect(() => {
       async function init() {
@@ -17,12 +19,13 @@ export default function useNotesStorage() {
                const { _rev, _attachments, _conflicts, ...note } = r.doc!;
                return note;
             });
-            setNotes(docs);
+            console.log(docs);
+            updateNotes(docs);
          }
 
          setLoaded(true);
       }
 
       if (!loaded && !notes.length) init();
-   }, [loaded, notes]);
+   }, [updateNotes, loaded, notes]);
 }
