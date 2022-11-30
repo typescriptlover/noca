@@ -89,8 +89,6 @@ const Note: FC<Props> = ({ note, canvasRef }) => {
             width: `${note.width}px`,
             height: `${note.height}px`,
             transform: `translate(${note.x}px, ${note.y}px)`,
-            transitionProperty: 'transform',
-            transitionDuration: '50ms',
          }}
       >
          <div className="relative w-full h-full">
