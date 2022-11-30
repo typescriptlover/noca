@@ -84,7 +84,7 @@ const Note: FC<Props> = ({ note, canvasRef }) => {
    return (
       <div
          id={`note-${note._id}`}
-         className="absolute pointer-events-auto transition-transform"
+         className="absolute pointer-events-auto"
          style={{
             width: `${note.width}px`,
             height: `${note.height}px`,
