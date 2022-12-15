@@ -15,3 +15,10 @@ export interface IMouseCoords {
    x: number;
    y: number;
 }
+
+export interface IChangelog {
+   title: string;
+   type: 'feature' | 'update' | 'experimental';
+   description: string;
+   createdAt: string;
+}

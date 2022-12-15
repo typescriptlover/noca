@@ -10,7 +10,7 @@ const Zoom: FC = () => {
    ]);
 
    return (
-      <div className="absolute bottom-[20px] right-[20px] z-50">
+      <div className="absolute bottom-5 right-5 z-50">
          <div className="flex select-none items-center overflow-hidden border border-base-750 rounded-xl drop-shadow-2xl">
             <Tooltip text="Zoom out">
                <button

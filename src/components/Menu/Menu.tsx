@@ -7,6 +7,7 @@ import Notes from './Tabs/Notes';
 import Guide from './Tabs/Guide';
 import Bookmarks from './Tabs/Bookmarks';
 import Tooltip from '../ui/Tooltip';
+import Changelog from './Tabs/Changelog';
 
 interface Props {}
 
@@ -20,7 +21,7 @@ const Menu: React.FC<Props> = () => {
 
    return (
       <>
-         <div className="absolute top-[20px] left-[20px] z-[51]">
+         <div className="absolute top-5 left-5 z-[51]">
             <Tooltip text="Menu" placement="bottom">
                <button
                   onClick={() => setShowMenu(!showMenu)}
@@ -39,10 +40,10 @@ const Menu: React.FC<Props> = () => {
                tabs={(tab, setTab) => {
                   if (tab === 'notes') {
                      return <Notes setShowMenu={setShowMenu} setTab={setTab} />;
-                  } else if (tab === 'bookmarks') {
-                     return <Bookmarks setTab={setTab} />;
                   } else if (tab === 'guide') {
                      return <Guide setTab={setTab} />;
+                  } else if (tab === 'changelog') {
+                     return <Changelog setTab={setTab} />;
                   }
                }}
             />

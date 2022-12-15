@@ -3,11 +3,11 @@ import { RefObject, useEffect } from 'react';
 import useBearStore from '@/lib/state';
 
 export default function useZoom(containerRef: RefObject<HTMLDivElement>) {
-   const [canvas, updateCanvas] = useBearStore((state) => [
+   const [canvas, updateCanvas, busy] = useBearStore((state) => [
       state.canvas,
       state.updateCanvas,
+      state.busy,
    ]);
-   const busy = false;
 
    useEffect(() => {
       if (!busy && containerRef.current) {

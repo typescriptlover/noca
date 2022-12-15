@@ -2,12 +2,14 @@ import { useRef } from 'react';
 
 import useCanvasStorage from '@/hooks/useCanvasStorage';
 import useNotesStorage from '@/hooks/useNotesStorage';
+import Introduction from '@/components/Introduction/Introduction';
 import Canvas from '@/components/Canvas/Canvas';
 import Zoom from '@/components/Canvas/Zoom';
 import Menu from '@/components/Menu/Menu';
 import Sidebar from '@/components/Sidebar/Sidebar';
 
 import useBearState from '@/lib/state';
+import Mode from './components/Canvas/Mode';
 
 const App = () => {
    const canvasLoaded = useCanvasStorage();
@@ -31,6 +33,8 @@ const App = () => {
             cursor,
          }}
       >
+         <Introduction />
+         <Mode />
          <Canvas ref={canvasRef} container={containerRef} />
          <Menu />
          <Sidebar container={containerRef} canvas={canvasRef} />

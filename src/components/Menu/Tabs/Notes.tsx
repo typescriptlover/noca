@@ -35,7 +35,7 @@ const Notes: React.FC<Props> = ({ setShowMenu, setTab }) => {
                {notes.slice((page - 1) * per, per * page).map((note) => (
                   <button
                      key={`menu-${note._id}`}
-                     className="w-full px-5 py-4 text-left rounded-xl hover:bg-base-900 transition duration-200 ease-linear"
+                     className="w-full px-5 py-4 text-left transition duration-200 ease-linear rounded-xl hover:bg-base-900 hover:ring-2 hover:ring-base-850"
                      onClick={() => {
                         setShowMenu(false);
                         jump(note);

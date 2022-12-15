@@ -1,6 +1,8 @@
-import { FC, RefObject, useEffect, useRef, useState } from 'react';
+import { FC, RefObject, useCallback, useEffect, useRef, useState } from 'react';
 
 import { AnimatePresence, motion } from 'framer-motion';
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 
 import useBearStore from '@/lib/state';
 import useJump from '@/hooks/useJump';
@@ -29,6 +31,7 @@ const Note: FC<Props> = ({ note, canvasRef }) => {
    );
    const jump = useJump(note);
 
+   const [focused, setFocused] = useState<boolean>(false);
    const [moving, setMoving] = useState<boolean>(false);
    const toolbarRef = useRef<HTMLDivElement>(null);
 
@@ -80,6 +83,30 @@ const Note: FC<Props> = ({ note, canvasRef }) => {
    function locationSize() {
       return 30 / canvas.scale;
    }
+
+   const editor = useEditor({
+      extensions: [StarterKit],
+      onFocus() {
+         updateBusy(true);
+         setFocused(true);
+      },
+      onBlur() {
+         updateBusy(false);
+         setFocused(false);
+      },
+      onUpdate({ editor }) {
+         updateNote(note._id, {
+            note: editor.getHTML(),
+         });
+      },
+      content: note.note || '',
+      editorProps: {
+         attributes: {
+            class: 'focus:outline-none prose-invert prose prose-p:text-sm prose-h1:text-xl prose-h2:text-lg prose-h3:text-base',
+         },
+      },
+      autofocus: 'end',
+   });
 
    return (
       <div
@@ -149,27 +176,22 @@ const Note: FC<Props> = ({ note, canvasRef }) => {
                         </Tooltip>
                         <span
                            onClick={toggleMove}
-                           className="px-2.5 py-2 text-zinc-400 cursor-grab"
+                           className={clsx("px-2.5 py-2 text-zinc-400", moving ? 'cursor-grabbing' : 'cursor-grab')}
                         >
                            <i className="fa-solid fa-fw fa-up-down-left-right"></i>
                         </span>
                      </div>
                   </div>
                </motion.div>
-               <textarea
-                  disabled={jumping}
-                  onFocus={() => updateBusy(true)}
-                  onBlur={() => updateBusy(false)}
-                  spellCheck={false}
-                  value={note.note || ''}
-                  onInput={(e: any) => {
-                     updateNote(note._id, {
-                        ...note,
-                        note: e.target.value,
-                     });
-                  }}
-                  className="w-full h-full p-3 overflow-hidden text-sm font-medium text-white rounded-lg resize-none select-text focus:overflow-auto focus:outline-none bg-base-400/10 focus:bg-base-300/10"
-               />
+               <div
+                  onClick={() => editor?.view.dom.focus()}
+                  className={clsx(
+                     'w-full h-full p-4 bg-base-400/10 cursor-text',
+                     focused ? 'overflow-auto' : 'overflow-hidden'
+                  )}
+               >
+                  <EditorContent editor={editor} spellCheck={false} />
+               </div>
             </div>
          </div>
       </div>

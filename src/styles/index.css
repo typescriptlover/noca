@@ -13,3 +13,7 @@
 ::-webkit-scrollbar-corner {
    background: transparent;
 }
+
+.prose :not(:where([class~='not-prose'] *)) {
+   margin-top: 0 !important;
+}

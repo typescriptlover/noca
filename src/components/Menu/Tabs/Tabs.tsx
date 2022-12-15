@@ -22,14 +22,14 @@ const Tabs = ({ tabs }: Props) => {
                   action={() => setTab('notes')}
                />
                <TabButton
-                  name="Bookmarks"
-                  icon="bookmark"
-                  action={() => setTab('bookmarks')}
-               />
-               <TabButton
                   name="Guide"
                   icon="keyboard"
                   action={() => setTab('guide')}
+               />
+               <TabButton
+                  name="Changelog"
+                  icon="memo-pad"
+                  action={() => setTab('changelog')}
                />
             </div>
          </div>
