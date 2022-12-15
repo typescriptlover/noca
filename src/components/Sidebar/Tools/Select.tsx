@@ -76,7 +76,7 @@ const Select: FC<Props> = ({ container, canvas }) => {
 
    useEffect(() => {
       function startSelect(e: MouseEvent) {
-         if (e.currentTarget !== e.target) return;
+         if (e.currentTarget !== e.target || e.which !== 1) return;
 
          const coords = getMouseCoords(canvas, e, scale);
 

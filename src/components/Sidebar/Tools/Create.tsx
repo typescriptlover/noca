@@ -46,7 +46,7 @@ const Creation = forwardRef<HTMLDivElement, CreationProps>(
 
       useEffect(() => {
          if (creating) {
-            if (selection.height <= 100 || selection.width <= 100) {
+            if (selection.height <= 150 || selection.width <= 150) {
                setCreating(false);
                setSelecting(false);
             } else {
@@ -117,13 +117,13 @@ const Create: FC<Props> = ({ container, canvas }) => {
 
    const creationRef = useRef<HTMLDivElement>(null);
 
-   function handleCreate() {
+   function handleCreate(e: MouseEvent) {
       setCreating(true);
    }
 
    useEffect(() => {
       function startSelect(e: MouseEvent) {
-         if (e.currentTarget !== e.target || creating) return;
+         if (e.currentTarget !== e.target || creating || e.which !== 1) return;
 
          const coords = getMouseCoords(canvas, e, scale);
 
@@ -141,6 +141,7 @@ const Create: FC<Props> = ({ container, canvas }) => {
 
          if (coords) {
             const { x, y } = coords;
+
             setCurrent({ x, y });
          }
       }
