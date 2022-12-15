@@ -1,4 +1,4 @@
-import { AnimatePresence, LayoutGroup } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import {
    Dispatch,
    FC,
@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
+import FocusLock from 'react-focus-lock';
 
 import useClickOutside from '@/hooks/useClickOutside';
 import clsx from 'clsx';
@@ -19,6 +20,7 @@ interface Props {
    setShowModal: Dispatch<SetStateAction<boolean>>;
    className?: string;
    onClose?: any;
+   focusLock?: boolean;
 }
 const Modal: FC<Props> = ({
    children,
@@ -26,6 +28,7 @@ const Modal: FC<Props> = ({
    setShowModal,
    className,
    onClose,
+   focusLock,
 }) => {
    const ref = useRef<HTMLDivElement>(null);
    const containerRef = useRef<HTMLDivElement>(null);
@@ -47,42 +50,44 @@ const Modal: FC<Props> = ({
    if (typeof document === 'undefined') return null;
 
    return createPortal(
-      <AnimatePresence mode="wait">
-         {showModal && (
-            <motion.div
-               ref={containerRef}
-               initial={{ opacity: 0 }}
-               animate={{ opacity: 1 }}
-               exit={{ opacity: 0 }}
-               transition={{ ease: 'easeInOut', duration: 0.3 }}
-               className={clsx(
-                  'fixed inset-0 overflow-y-auto z-[500] bg-black/60 px-4 py-8'
-               )}
-            >
+      <FocusLock autoFocus={false} disabled={focusLock === false}>
+         <AnimatePresence mode="wait">
+            {showModal && (
                <motion.div
-                  ref={ref}
-                  initial={{ opacity: 0, y: 45 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 45 }}
+                  ref={containerRef}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   transition={{ ease: 'easeInOut', duration: 0.3 }}
                   className={clsx(
-                     'relative mx-auto shadow-2xl bg-base-950 border border-base-850',
-                     className
+                     'fixed inset-0 overflow-y-auto z-[500] bg-black/60 px-4 py-8'
                   )}
                >
-                  <AnimatePresence mode="sync">{children}</AnimatePresence>
-                  <div className="absolute top-3 right-4">
-                     <button
-                        onClick={close}
-                        className="text-2xl transition duration-200 ease-linear opacity-50 hover:scale-105 will-change-transform hover:opacity-100"
-                     >
-                        <i className="fa-light fa-xmark"></i>
-                     </button>
-                  </div>
+                  <motion.div
+                     ref={ref}
+                     initial={{ opacity: 0, y: 45 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     exit={{ opacity: 0, y: 45 }}
+                     transition={{ ease: 'easeInOut', duration: 0.3 }}
+                     className={clsx(
+                        'relative mx-auto shadow-2xl bg-base-950 border border-base-850',
+                        className
+                     )}
+                  >
+                     <AnimatePresence mode="sync">{children}</AnimatePresence>
+                     <div className="absolute top-3 right-4">
+                        <button
+                           onClick={close}
+                           className="text-2xl transition duration-200 ease-linear opacity-50 hover:scale-105 will-change-transform hover:opacity-100"
+                        >
+                           <i className="fa-light fa-xmark"></i>
+                        </button>
+                     </div>
+                  </motion.div>
                </motion.div>
-            </motion.div>
-         )}
-      </AnimatePresence>,
+            )}
+         </AnimatePresence>
+      </FocusLock>,
       document.body
    );
 };

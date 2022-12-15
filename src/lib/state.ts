@@ -31,7 +31,6 @@ const useBearStore = create<State>((set) => ({
       scale: 1,
    },
    notes: [],
-
    tools: {
       create: true,
       select: false,
