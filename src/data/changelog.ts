@@ -13,14 +13,14 @@ const changelog: IChangelog[] = [
       title: 'Canvas mode',
       type: 'experimental',
       description:
-         'A small and straight-forward way of indicating what mode you are currently in, currently only supports tools but will support global modes.',
+         'A small and straight-forward way of indicating what mode you are currently in, currently only supports tools but will support all modes.',
       createdAt: '12/15/2022',
    },
    {
       title: 'Markdown support',
       type: 'feature',
       description:
-         'Added WYSIWYG editor inside note using tiptap, basic markdown for now but custom plugins soon.',
+         'Added WYSIWYG editor inside note, basic markdown for now but custom plugins soon.',
       createdAt: '12/15/2022',
    },
    {
